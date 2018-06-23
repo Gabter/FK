@@ -1,0 +1,142 @@
+==================
+Catkin Package
+==================
+# You should have created this in the Creating a Workspace Tutorial
+$ cd ~/catkin_ws/src
+
+#catkin_create_pkg requires that you give it a package_name and optionally a list of dependencies on which that package depends:
+#create a new package called 'beginner_tutorials' which depends on std_msgs, roscpp, and rospy
+# This is an example, do not try to run this
+# catkin_create_pkg <package_name> [depend1] [depend2] [depend3]
+
+$ catkin_create_pkg beginner_tutorials std_msgs rospy roscpp
+
+========================================================
+Building a catkin workspace and sourcing the setup file
+========================================================
+# Now you need to build the packages in the catkin workspace:
+$ cd ~/catkin_ws
+$ catkin_make
+
+#To add the workspace to your ROS environment you need to source the generated setup file:
+$ . ~/catkin_ws/devel/setup.bash
+
+
+=======================================
+package dependencies
+1.First-order dependencies
+======================================
+$ rospack depends1 beginner_tutorials 
+	roscpp
+	rospy
+	std_msgs
+
+$ roscd beginner_tutorials
+$ cat package.xml
+
+========================
+2.Indirect dependencies
+========================
+#In many cases, a dependency will also have its own dependencies. For instance, rospy has other dependencies.
+$ rospack depends1 rospy
+
+#A package can have quite a few indirect dependencies. Luckily rospack can recursively determine all nested dependencies.
+$ rospack depends beginner_tutorials
+
+=========================
+6.Customizing Your Package
+==========================
+6.1 Customizing the package.xml
+6.1.1 description tag
+6.1.2 maintainer tags
+6.1.3 license tags
+6.1.4 dependencies tags
+6.1.5 Final package.xml
+
+6.2 Customizing the CMakeLists.txt
+
+
+==================================
+Building a ROS Package
+=================================
+
+1. Building Packages
+Source your environmental setup file
+# source /opt/ros/%YOUR_ROS_DISTRO%/setup.bash
+$ source /opt/ros/kinetic/setup.bash     # For Kinetic for instance
+
+1.1 Using Catkin_make
+# In a catkin workspace
+$ catkin_make [make_targets] [-DCMAKE_VARIABLES=...]
+
+# In a catkin workspace
+$ catkin_make
+$ catkin_make install  # (optionally)
+
+The above commands will build any catkin projects found in the src folder. This follows the recommendations set by REP128. If your source code is in a different place, say my_src then you would call catkin_make like this:
+
+# In a catkin workspace
+$ catkin_make --source my_src
+$ catkin_make install --source my_src  # (optionally)
+
+1.2 Building Your Package
+$ cd ~/catkin_ws/
+$ ls src
+	beginner_tutorials/  CMakeLists.txt@  
+
+$ catkin_make   ## build the catkin workspace, packages
+
+=========================
+Understanding ROS NOdes
+=========================
+#Introduces ROS graph concepts,roscore, rosnode, and rosrun tools
+
+1. Prerequisites
+# Install lightweight simulator. Replace '<distro>' with the name of your ROS distribution (e.g. indigo, jade, kinetic)
+
+$ sudo apt-get install ros-<distro>-ros-tutorials
+
+2. Quick Overview of Graph Concepts
+-NOdes
+-Messages
+-Topics
+-Master
+-rosout
+-roscore
+
+3. Nodes : It is executable file within a ROS package,use ROS client library to communicate with other nodes, can publish or subscribe to a Topic, provide or use a service.
+
+4. Client Libraries :  Allows nodes written in different programming language to communicate
+- rospy = python client library
+- roscpp = c++ client library
+
+5.roscore : roscore is the first thing you should run when using ROS
+
+$ roscore
+
+If roscore does not initialize and sends a message about lack of permissions, probably the ~/.ros folder is owned by root, change recursively the ownership of that folder with:
+
+$ sudo chown -R <your_username> ~/.ros
+
+6. Using rosnode
+
+$ rosnode list
+You will see:
+	/rosout
+
+The rosnode info command returns information about a specific node.
+$ rosnode info /rosout
+
+7.Using rosrun
+
+$ rosrun [package_name] [node_name]
+ 
+Run in a new terminal
+$ rosrun turtlesim turtlesim_node
+You will see the turtlesim window:
+
+$ rosrun turtlesim turtlesim_node __name:=my_turtle
+$ rosnode list
+You will see something similar to:
+/rosout
+/my_turtle
